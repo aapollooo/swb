@@ -63,12 +63,14 @@ class _LoginPageState extends State<LoginPage> {
       if (data['success'] == true) {
         // --- SAVE TOKEN AND USER DATA ---
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString("token", data['token']);
+        await prefs.setString("token", "logged_in");
         await prefs.setString("name", data['user']['full_name']);
+        await prefs.setString("role", data['user']['role']);
 
-        // --- REDIRECT TO DASHBOARD ---
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/dashboard');
+        if (data['user']['role'] == 'staff') {
+          Navigator.pushReplacementNamed(context, '/staff-dashboard');
+        } else {
+          Navigator.pushReplacementNamed(context, '/customer-dashboard');
         }
       } else {
         showAlert("Login Failed", data['message']);
