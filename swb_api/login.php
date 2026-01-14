@@ -11,7 +11,7 @@ if ($email === '' || $password === '') {
     exit;
 }
 
-$sql = "SELECT id, full_name, password FROM users WHERE email = ?";
+$sql = "SELECT id, full_name, password, role FROM users WHERE email = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 $stmt->execute();
@@ -36,7 +36,8 @@ if ($result->num_rows === 1) {
             "user" => [
                 "id" => $user['id'],
                 "full_name" => $user['full_name'],
-                "email" => $email
+                "email" => $email,
+                "role" => $user['role'] ?? 'customer'
             ]
         ]);
         exit;

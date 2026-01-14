@@ -14,10 +14,17 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  Future<bool> isLoggedIn() async {
+  /// Returns the role of the currently logged-in user.
+  ///
+  /// - `null`  → no token saved, user should see the Landing page.
+  /// - `'staff'` or `'customer'` → route to the appropriate dashboard.
+  Future<String?> _getLoggedInRole() async {
     final prefs = await SharedPreferences.getInstance();
-    // Returns true if a token exists
-    return prefs.getString("token") != null;
+    final token = prefs.getString("token");
+    if (token == null) return null;
+
+    // Default any logged-in user with no explicit role to "customer".
+    return prefs.getString("role") ?? 'customer';
   }
 
   @override
@@ -43,9 +50,9 @@ class MyApp extends StatelessWidget {
       ),
 
       // 🔥 APP ENTRY LOGIC
-      // Decides whether to show Landing or Dashboard on startup
-      home: FutureBuilder<bool>(
-        future: isLoggedIn(),
+      // Decides whether to show Landing, Customer, or Staff dashboard on startup
+      home: FutureBuilder<String?>(
+        future: _getLoggedInRole(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
@@ -53,13 +60,16 @@ class MyApp extends StatelessWidget {
             );
           }
 
-          if (snapshot.data == true) {
-            // Check your login logic to see if you should go to 
-            // Customer or Staff dashboard specifically.
-            return const CustomerDashboard(); 
-          }
+          final role = snapshot.data;
 
-          return const LandingPage();
+          if (role == 'staff') {
+            return const StaffDashboard();
+          } else if (role == 'customer') {
+            return const CustomerDashboard();
+          } else {
+            // No token saved → show marketing / auth entry point
+            return const LandingPage();
+          }
         },
       ),
 

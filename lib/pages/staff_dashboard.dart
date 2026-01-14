@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'staff_packages.dart';
+import 'staff_reservations.dart';
+
 class StaffDashboard extends StatefulWidget {
   const StaffDashboard({super.key});
 
@@ -10,6 +13,7 @@ class StaffDashboard extends StatefulWidget {
 
 class _StaffDashboardState extends State<StaffDashboard> {
   String name = "";
+  String role = "staff";
 
   @override
   void initState() {
@@ -19,9 +23,9 @@ class _StaffDashboardState extends State<StaffDashboard> {
 
   Future<void> checkSession() async {
     final prefs = await SharedPreferences.getInstance();
-    final role = prefs.getString("role");
+    final savedRole = prefs.getString("role");
 
-    if (role != "staff") {
+    if (savedRole != "staff") {
       if (mounted) {
         Navigator.pushReplacementNamed(context, "/login");
       }
@@ -30,13 +34,49 @@ class _StaffDashboardState extends State<StaffDashboard> {
 
     setState(() {
       name = prefs.getString("name") ?? "Staff";
+      role = savedRole ?? "staff";
     });
   }
 
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+    if (!mounted) return;
     Navigator.pushReplacementNamed(context, "/login");
+  }
+
+  Widget _dashboardCard(
+    String title,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 36, color: Colors.blueGrey.shade700),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -53,24 +93,80 @@ class _StaffDashboardState extends State<StaffDashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Welcome, $name 👋",
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            Text(
+              "Welcome, $name 👋",
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Current role: $role",
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black54,
+              ),
+            ),
             const SizedBox(height: 20),
-
-            ListTile(
-              leading: const Icon(Icons.inventory),
-              title: const Text("Manage Products"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.shopping_cart),
-              title: const Text("Manage Orders"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.bar_chart),
-              title: const Text("Reports"),
-              onTap: () {},
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                children: [
+                  _dashboardCard(
+                    "Packages",
+                    Icons.inventory_2,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const StaffPackagesPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  _dashboardCard(
+                    "Reservations",
+                    Icons.event_note,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const StaffReservationsPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  _dashboardCard(
+                    "Orders (Coming soon)",
+                    Icons.shopping_cart,
+                    () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Order management will be available in a future update.',
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  _dashboardCard(
+                    "Reports (Coming soon)",
+                    Icons.bar_chart,
+                    () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Reports will be available in a future update.',
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),

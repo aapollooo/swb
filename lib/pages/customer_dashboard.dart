@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'customer_packages.dart';
+import 'customer_reservations.dart';
+
 class CustomerDashboard extends StatefulWidget {
   const CustomerDashboard({super.key});
 
@@ -10,6 +13,7 @@ class CustomerDashboard extends StatefulWidget {
 
 class _CustomerDashboardState extends State<CustomerDashboard> {
   String name = "";
+  String role = "";
 
   @override
   void initState() {
@@ -19,28 +23,29 @@ class _CustomerDashboardState extends State<CustomerDashboard> {
 
   Future<void> checkSession() async {
     final prefs = await SharedPreferences.getInstance();
-    final role = prefs.getString("role");
+    final savedRole = prefs.getString("role");
 
-    if (role == null) {
+    if (savedRole == null) {
       if (mounted) {
         Navigator.pushReplacementNamed(context, "/login");
       }
-    } 
-    // Optional: Ensure a Staff member can't access the Customer dashboard
-    else if (role != "customer") {
+    } else if (savedRole != "customer") {
+      // Ensure a Staff member can't access the Customer dashboard
       if (mounted) {
-         Navigator.pushReplacementNamed(context, "/login");
+        Navigator.pushReplacementNamed(context, "/login");
       }
     }
 
     setState(() {
       name = prefs.getString("name") ?? "Customer";
+      role = savedRole ?? "customer";
     });
   }
 
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+    if (!mounted) return;
     Navigator.pushReplacementNamed(context, "/login");
   }
 
@@ -58,24 +63,77 @@ class _CustomerDashboardState extends State<CustomerDashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Welcome, $name 👋",
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            Text(
+              "Welcome, $name 👋",
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Current role: $role",
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black54,
+              ),
+            ),
             const SizedBox(height: 20),
-
-            ListTile(
-              leading: const Icon(Icons.inventory),
-              title: const Text("Browse Packages"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.event),
-              title: const Text("My Reservations"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.payment),
-              title: const Text("Payments"),
-              onTap: () {},
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 2,
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.inventory),
+                    title: const Text("Browse Party Packages"),
+                    subtitle: const Text("See available packages and reserve"),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CustomerPackagesPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(height: 0),
+                  ListTile(
+                    leading: const Icon(Icons.event),
+                    title: const Text("My Reservations"),
+                    subtitle:
+                        const Text("View your upcoming and past reservations"),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CustomerReservationsPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(height: 0),
+                  ListTile(
+                    leading: const Icon(Icons.payment),
+                    title: const Text("Payments"),
+                    subtitle: const Text("Coming soon"),
+                    trailing: const Icon(Icons.lock_clock),
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Online payment tracking will be available in a future update.',
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),

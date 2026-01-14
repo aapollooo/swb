@@ -10,6 +10,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   String fullName = "";
+  String role = "";
 
   @override
   void initState() {
@@ -21,6 +22,7 @@ class _DashboardPageState extends State<DashboardPage> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
     final name = prefs.getString("name");
+    final savedRole = prefs.getString("role");
 
     if (token == null) {
       // Not logged in → back to login
@@ -28,6 +30,7 @@ class _DashboardPageState extends State<DashboardPage> {
     } else {
       setState(() {
         fullName = name ?? "User";
+        role = savedRole ?? "unknown";
       });
     }
   }
@@ -84,6 +87,14 @@ class _DashboardPageState extends State<DashboardPage> {
             Text(
               "Welcome, $fullName 👋",
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Current role: $role",
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black54,
+              ),
             ),
             const SizedBox(height: 20),
 

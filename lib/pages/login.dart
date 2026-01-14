@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       // Note: If using an Android Emulator, replace 'localhost' with '10.0.2.2'
-      var url = Uri.parse("http://localhost/swb_api/login.php");
+      var url = Uri.parse("http://192.168.18.7/swb_api/login.php");
 
       var response = await http.post(
         url,
@@ -63,9 +63,10 @@ class _LoginPageState extends State<LoginPage> {
       if (data['success'] == true) {
         // --- SAVE TOKEN AND USER DATA ---
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString("token", "logged_in");
+        await prefs.setString("token", data['token'] ?? "logged_in");
         await prefs.setString("name", data['user']['full_name']);
-        await prefs.setString("role", data['user']['role']);
+        await prefs.setString("role", data['user']['role'] ?? 'customer');
+        await prefs.setInt("user_id", data['user']['id']);
 
         if (data['user']['role'] == 'staff') {
           Navigator.pushReplacementNamed(context, '/staff-dashboard');
