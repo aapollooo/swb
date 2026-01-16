@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       // Note: If using an Android Emulator, replace 'localhost' with '10.0.2.2'
-      var url = Uri.parse("http://192.168.18.7/swb_api/login.php");
+      var url = Uri.parse("http://localhost/swb_api/login.php");
 
       var response = await http.post(
         url,
@@ -68,8 +68,11 @@ class _LoginPageState extends State<LoginPage> {
         await prefs.setString("role", data['user']['role'] ?? 'customer');
         await prefs.setInt("user_id", data['user']['id']);
 
-        if (data['user']['role'] == 'staff') {
+        final role = data['user']['role'] ?? 'customer';
+        if (role == 'staff') {
           Navigator.pushReplacementNamed(context, '/staff-dashboard');
+        } else if (role == 'owner' || role == 'admin') {
+          Navigator.pushReplacementNamed(context, '/owner-dashboard');
         } else {
           Navigator.pushReplacementNamed(context, '/customer-dashboard');
         }

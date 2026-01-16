@@ -34,7 +34,7 @@ class _CustomerReservationsPageState extends State<CustomerReservationsPage> {
         throw Exception('User not logged in');
       }
 
-      final url = Uri.parse("http://192.168.18.7/swb_api/get_reservations.php?user_id=$userId");
+      final url = Uri.parse("http://localhost/swb_api/get_reservations.php?user_id=$userId");
       final response = await http.get(url);
 
       if (!mounted) return;

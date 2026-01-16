@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../models/models.dart';
-import 'customer_reservations.dart';
+import '../pages/customer_reservations.dart';
 
 class CustomerPackagesPage extends StatelessWidget {
   const CustomerPackagesPage({super.key});

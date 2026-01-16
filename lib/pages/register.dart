@@ -37,7 +37,7 @@ class _RegisterPageState extends State<RegisterPage> {
   setState(() => isLoading = true);
 
   try {
-    var url = Uri.parse("http://192.168.18.7/swb_api/register.php");
+    var url = Uri.parse("http://localhost/swb_api/register.php");
 
     var response = await http.post(
       url,

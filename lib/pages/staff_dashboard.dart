@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'staff_packages.dart';
 import 'staff_reservations.dart';
+import 'staff_inventory.dart';
+import 'staff_tasks.dart';
 
 class StaffDashboard extends StatefulWidget {
   const StaffDashboard({super.key});
@@ -116,18 +118,6 @@ class _StaffDashboardState extends State<StaffDashboard> {
                 mainAxisSpacing: 16,
                 children: [
                   _dashboardCard(
-                    "Packages",
-                    Icons.inventory_2,
-                    () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const StaffPackagesPage(),
-                        ),
-                      );
-                    },
-                  ),
-                  _dashboardCard(
                     "Reservations",
                     Icons.event_note,
                     () {
@@ -140,27 +130,37 @@ class _StaffDashboardState extends State<StaffDashboard> {
                     },
                   ),
                   _dashboardCard(
-                    "Orders (Coming soon)",
-                    Icons.shopping_cart,
+                    "Inventory",
+                    Icons.inventory,
                     () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Order management will be available in a future update.',
-                          ),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const StaffInventoryPage(),
                         ),
                       );
                     },
                   ),
                   _dashboardCard(
-                    "Reports (Coming soon)",
-                    Icons.bar_chart,
+                    "My Tasks",
+                    Icons.assignment,
                     () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Reports will be available in a future update.',
-                          ),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const StaffTasksPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  _dashboardCard(
+                    "Packages",
+                    Icons.inventory_2,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const StaffPackagesPage(),
                         ),
                       );
                     },

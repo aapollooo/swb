@@ -28,7 +28,7 @@ class _StaffReservationsPageState extends State<StaffReservationsPage> {
 
     try {
       // Staff can see all reservations (no user_id parameter)
-      final url = Uri.parse("http://192.168.18.7/swb_api/get_reservations.php");
+      final url = Uri.parse("http://localhost/swb_api/get_reservations.php");
       final response = await http.get(url);
 
       if (!mounted) return;

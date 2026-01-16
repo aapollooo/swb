@@ -6,6 +6,7 @@ import 'pages/register.dart';
 import 'pages/login.dart';
 import 'pages/customer_dashboard.dart';
 import 'pages/staff_dashboard.dart';
+import 'pages/owner_dashboard.dart';
 
 void main() {
   runApp(const MyApp());
@@ -62,13 +63,15 @@ class MyApp extends StatelessWidget {
 
           final role = snapshot.data;
 
-          if (role == 'staff') {
-            return const StaffDashboard();
-          } else if (role == 'customer') {
-            return const CustomerDashboard();
-          } else {
+          if (role == null) {
             // No token saved → show marketing / auth entry point
             return const LandingPage();
+          } else if (role == 'staff') {
+            return const StaffDashboard();
+          } else if (role == 'owner' || role == 'admin') {
+            return const OwnerDashboard();
+          } else {
+            return const CustomerDashboard();
           }
         },
       ),
@@ -81,6 +84,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterPage(),
         '/customer-dashboard': (context) => const CustomerDashboard(),
         '/staff-dashboard': (context) => const StaffDashboard(),
+        '/owner-dashboard': (context) => const OwnerDashboard(),
       },
     );
   }
