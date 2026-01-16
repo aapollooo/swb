@@ -217,7 +217,11 @@ class Reservation {
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
-
+  // Add these getters to satisfy the UI code
+  DateTime get date => eventDate;
+  int get guests => numberOfGuests;
+  String get notes => specialRequests ?? '';
+  
   Map<String, dynamic> toJson() {
     return {
       'id': id,
